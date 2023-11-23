@@ -1,4 +1,4 @@
-name: Log the inputs
+name: Log the inputs 2
 on:
   workflow_dispatch:
     inputs:
