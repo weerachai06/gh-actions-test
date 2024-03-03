@@ -14,9 +14,12 @@ on:
         type: string
 
 jobs:
-  call-workflow-in-local-repo:
-    uses: ./.github/workflows/reuseable-workflow.yaml
-    with:
-      tags: ${{ github.event.inputs.tags }}
-      level: ${{ github.event.inputs.level }}
-      environment: ${{ github.event.inputs.environment }}
+  my-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print my tags
+        run: echo "${{ inputs.tags}}"
+      - name: Print my level
+        run: echo "${{ inputs.level}}"
+      - name: Print my environment
+        run: echo "${{ inputs.environment}}"
