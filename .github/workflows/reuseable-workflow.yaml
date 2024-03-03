@@ -1,0 +1,22 @@
+name: Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      tags:
+        required: true
+        type: string
+      level:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+jobs:
+  call-workflow-in-local-repo:
+    uses: ./.github/workflows/reuseable-workflow.yaml
+    with:
+      tags: ${{ github.event.inputs.tags }}
+      level: ${{ github.event.inputs.level }}
+      environment: ${{ github.event.inputs.environment }}
