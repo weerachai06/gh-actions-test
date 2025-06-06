@@ -21,10 +21,10 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             const { base, head } = context.payload.pull_request;
-            let suggestion = '';
 
             if (head.ref.startsWith('releases/') && base.ref === 'main') {
-              suggestion = '🚀 This looks like a release PR. Consider using the `release_to_master.md` template!';
+              templateFile = '.github/PULL_REQUEST_TEMPLATE/release_to_master.md';
+              templateMessage = '🚀 Release PR template automatically applied!';
             } else if (head.ref.startsWith('hotfix/') && base.ref === 'main') {
               templateFile = '.github/PULL_REQUEST_TEMPLATE/hotfix_to_master.md';
               templateMessage = '🔥 Hotfix PR template automatically applied!';
