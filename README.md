@@ -41,3 +41,5 @@ To leverage this workflow, use these branch naming patterns:
 ### PR Templates
 
 Templates are stored in `.github/PULL_REQUEST_TEMPLATE/` and contain structured formats for different types of changes.
+
+## README
