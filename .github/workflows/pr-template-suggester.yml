@@ -1,0 +1,32 @@
+name: Suggest PR Template
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  suggest-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Suggest appropriate template
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { base, head } = context.payload.pull_request;
+            let suggestion = '';
+            
+            if (head.ref.startsWith('releases/') && base.ref === 'master') {
+              suggestion = '🚀 This looks like a release PR. Consider using the `release_to_master.md` template!';
+            } else if (head.ref.startsWith('hotfix/') && base.ref === 'master') {
+              suggestion = '🔥 This looks like a hotfix PR. Consider using the `hotfix_to_master.md` template!';
+            } else if (base.ref === 'develop') {
+              suggestion = '✨ This looks like a feature PR. Consider using the `feature_to_develop.md` template!';
+            }
+            
+            if (suggestion) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: suggestion
+              });
+            }
