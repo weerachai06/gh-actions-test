@@ -14,11 +14,11 @@ jobs:
             const { base, head } = context.payload.pull_request;
             let suggestion = '';
             
-            if (head.ref.startsWith('releases/') && base.ref === 'master') {
+            if (head.ref.startsWith('releases/') && base.ref === 'mains') {
               suggestion = '🚀 This looks like a release PR. Consider using the `release_to_master.md` template!';
-            } else if (head.ref.startsWith('hotfix/') && base.ref === 'master') {
+            } else if (head.ref.startsWith('hotfix/') && base.ref === 'main') {
               suggestion = '🔥 This looks like a hotfix PR. Consider using the `hotfix_to_master.md` template!';
-            } else if (base.ref === 'develop') {
+            } else if (base.ref === 'dev') {
               suggestion = '✨ This looks like a feature PR. Consider using the `feature_to_develop.md` template!';
             }
             
