@@ -1,29 +1,66 @@
-name: Stupid Jobs
+name: Stupid Jobs Workflow
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      stupidity-level:
+        description: "Level of stupidity"
+        required: false
+        default: "medium"
+        type: choice
+        options:
+          - low
+          - medium
+          - high
+          - extreme
+      target-name:
+        description: "Name of the target person"
+        required: false
+        default: "Random Developer"
+      enable-chaos:
+        description: "Enable chaos mode"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   stupid-job:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          cd actions/fortune-teller && npm install
-
-      - name: Run a stupid job
-        run: |
-          echo "This is a stupid job that does nothing useful."
-          echo "But it can be useful for testing purposes!"
-          echo "Just to show that GitHub Actions can do anything, even the stupidest things."
-          echo "Remember, it's not about what you do, it's about how you do it!"
-
-      - name: Get your fortune
-        id: fortune
-        uses: ./actions/fortune-teller
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: ${{ github.event.inputs.your-name || 'Random Developer' }}
-          mood: ${{ github.event.inputs.your-mood || 'happy' }}
+          node-version: "20"
+
+      - name: Install Stupid Job dependencies
+        run: |
+          cd actions/stupid-job
+          npm install
+
+      - name: Execute Stupid Job
+        id: stupid
+        uses: ./actions/stupid-job
+        with:
+          stupidity-level: ${{ github.event.inputs.stupidity-level || 'medium' }}
+          target-name: ${{ github.event.inputs.target-name || 'Random Developer' }}
+          enable-chaos: ${{ github.event.inputs.enable-chaos || 'false' }}
+
+      - name: Display Stupid Results
+        run: |
+          echo "🎪 Stupid Job Results:"
+          echo "💬 Message: ${{ steps.stupid.outputs.stupid-message }}"
+          echo "🌪️ Chaos Level: ${{ steps.stupid.outputs.chaos-level }}"
+          echo "⏰ Time Wasted: ${{ steps.stupid.outputs.time-wasted }}"
+
+      - name: Final Stupid Message
+        run: |
+          echo "🎉 Congratulations! You've successfully run the most useless GitHub Action!"
+          echo "🏆 Achievement Unlocked: Master of Digital Procrastination"
+          echo "📊 Productivity Level: -1000%"
+          echo "🎯 Mission Accomplished: Nothing useful was done today!"

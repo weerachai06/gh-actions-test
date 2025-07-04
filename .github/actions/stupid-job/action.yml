@@ -1,0 +1,25 @@
+name: 'Stupid Job Action'
+description: 'A completely useless but entertaining GitHub Action for testing purposes'
+inputs:
+  stupidity-level:
+    description: 'Level of stupidity (low, medium, high, extreme)'
+    required: false
+    default: 'medium'
+  target-name:
+    description: 'Name of the person to annoy'
+    required: false
+    default: 'Developer'
+  enable-chaos:
+    description: 'Enable chaotic behavior'
+    required: false
+    default: 'false'
+outputs:
+  stupid-message:
+    description: 'The stupid message generated'
+  chaos-level:
+    description: 'Level of chaos achieved'
+  time-wasted:
+    description: 'Amount of time successfully wasted'
+runs:
+  using: 'node20'
+  main: 'index.js'
