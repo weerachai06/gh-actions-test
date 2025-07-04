@@ -31246,19 +31246,51 @@ function requireGithub () {
 
 var githubExports = requireGithub();
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = coreExports.getInput("who-to-greet");
-  coreExports.info(`Hello ${nameToGreet}!`);
+async function run() {
+  try {
+    // Get inputs from action metadata file
+    const nameToGreet = coreExports.getInput("who-to-greet");
+    const token = coreExports.getInput("github-token");
+    const message = coreExports.getInput("message") || `👋 Hello ${nameToGreet}! This is the stupid job saying hi!`;
 
-  // Get the current time and set it as an output variable
-  const time = new Date().toTimeString();
-  coreExports.setOutput("time", time);
+    // Create an authenticated GitHub client
+    const octokit = githubExports.getOctokit(token);
+    
+    // Log the greeting message
+    coreExports.info(`Hello ${nameToGreet}!`);
 
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(githubExports.context.payload, undefined, 2);
-  coreExports.info(`The event payload: ${payload}`);
-} catch (error) {
-  coreExports.setFailed(error.message);
+    // Get the current time and set it as an output variable
+    const time = new Date().toTimeString();
+    coreExports.setOutput("time", time);
+
+    // Check if this is a pull request event
+    if (githubExports.context.eventName === 'pull_request') {
+      try {
+        // Add a comment to the PR
+        const response = await octokit.rest.issues.createComment({
+          ...githubExports.context.repo,
+          issue_number: githubExports.context.payload.pull_request.number,
+          body: message
+        });
+        
+        coreExports.info(`Comment added to PR #${githubExports.context.payload.pull_request.number}`);
+        coreExports.info(`Comment URL: ${response.data.html_url}`);
+      } catch (commentError) {
+        coreExports.warning(`Failed to add comment to PR: ${commentError.message}`);
+        // Don't fail the action if commenting fails
+      }
+    } else {
+      coreExports.info(`This event is not a pull_request event, skipping comment creation.`);
+      coreExports.info(`Event name: ${githubExports.context.eventName}`);
+    }
+
+    // Log the payload for debugging
+    const payload = JSON.stringify(githubExports.context.payload, undefined, 2);
+    coreExports.debug(`The event payload: ${payload}`);
+  } catch (error) {
+    coreExports.setFailed(error.message);
+  }
 }
+
+run();
 //# sourceMappingURL=index.js.map

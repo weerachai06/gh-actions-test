@@ -1,22 +1,44 @@
+name: Stupid Job PR Commenter
+
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
 
 jobs:
-  hello_world_job:
-    name: A job to say hello
+  stupid_job:
+    name: Comment on PR with Stupid Job
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Hello world action step
-        id: hello
+
+      # Build the action (needed if changes are made to the action code)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build action
+        run: npm run build
+
+      # Run the action to comment on the PR
+      - name: Run Stupid Job action
+        id: stupid-job
         uses: ./
         with:
-          who-to-greet: Mona the Octocat
+          who-to-greet: "${{ github.event.pull_request.user.login }}"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          message: "👋 Hello ${{ github.event.pull_request.user.login }}! This is the Stupid Job here to brighten your day! 🎉 PR #${{ github.event.pull_request.number }} looks great!"
 
-      # Use the output from the `hello` step
+      # Use the output from the action step
       - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+        run: echo "The time was ${{ steps.stupid-job.outputs.time }}"
