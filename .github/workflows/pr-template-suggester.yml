@@ -28,13 +28,13 @@ jobs:
             } else if (head.ref.startsWith('hotfix/') && base.ref === 'main') {
               templateFile = '.github/PULL_REQUEST_TEMPLATE/hotfix_to_master.md';
               templateMessage = '🔥 Hotfix PR template automatically applied!';
-            } else if (base.ref === 'dev') {
-              templateFile = '.github/PULL_REQUEST_TEMPLATE/feature_to_develop.md';
-              templateMessage = '✨ Feature PR template automatically applied!';
             } else if (head.ref.startsWith('releases/') && base.ref === 'dev') {
               templateFile = '.github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md';
               templateMessage = '🎁 Merge Down After Release with template automatically applied!!';
-            } else {
+            } else if (base.ref === 'dev') {
+              templateFile = '.github/PULL_REQUEST_TEMPLATE/feature_to_develop.md';
+              templateMessage = '✨ Feature PR template automatically applied!';
+            }  else {
               console.log('No matching branch pattern found for PR template');
               return;
             }
