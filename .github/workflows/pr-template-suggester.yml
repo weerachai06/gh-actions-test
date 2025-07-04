@@ -37,14 +37,15 @@ jobs:
                   new RegExp(searchText, "g"),
                   replaceText
                 );
+                const replacedFileName = filePath.replace('.md', `_temp.md`);
 
                 // เขียนไฟล์กลับ
-                fs.writeFileSync(filePath, updatedContent, "utf8");
+                fs.writeFileSync(replacedFileName, updatedContent, "utf8");
 
-                console.log("แทนที่ข้อความสำเร็จ!");
+                console.log("✅ แทนที่ข้อความสำเร็จ!");
                 return updatedContent;
               } catch (error) {
-                console.error("เกิดข้อผิดพลาด:", error);
+                console.error("🚨 เกิดข้อผิดพลาด:", error);
                 return null;
               }
             }
@@ -56,13 +57,12 @@ jobs:
               templateFile = '.github/PULL_REQUEST_TEMPLATE/hotfix_to_master.md';
               templateMessage = '🔥 Hotfix PR template automatically applied!';
             } else if (head.ref.startsWith('releases/') && base.ref === 'dev') {
-              templateFile = '.github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md';
               
 
               replaceTextInMarkdown('.github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md', '{{RELEASE_VERSION}}', head.ref.replace('releases/', ''));
               replaceTextInMarkdown('.github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md', '{{FROM}}', base.ref);
 
-
+              templateFile = '.github/PULL_REQUEST_TEMPLATE/merge_down_to_develop_temp.md';
               templateMessage = '🎁 Merge Down After Release with template automatically applied!!';
 
 
