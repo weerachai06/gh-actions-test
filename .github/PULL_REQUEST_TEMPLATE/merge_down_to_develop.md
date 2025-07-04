@@ -1,4 +1,4 @@
-# [RX.X.X][Merge Down] <TO> => <FROM>
+# [RX.X.X][Merge Down] {{RELEASE_VERSION}} => {{FROM}}
 
 <!-- Relate version follow package.json -->
 
