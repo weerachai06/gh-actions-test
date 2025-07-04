@@ -13,7 +13,7 @@
   "license": "MIT",
   "author": "",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rollup --config rollup.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
