@@ -1,8 +1,8 @@
-import commonjs from "@rollup/plugin-commonjs";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
+const commonjs = require("@rollup/plugin-commonjs");
+const { nodeResolve } = require("@rollup/plugin-node-resolve");
 
 const config = {
-  input: "src/index.js",
+  input: "src/index.mjs",
   output: {
     esModule: true,
     file: "dist/index.js",
@@ -12,4 +12,4 @@ const config = {
   plugins: [commonjs(), nodeResolve({ preferBuiltins: true })],
 };
 
-export default config;
+module.exports = config;
