@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Stupid Job dependencies
         run: |
-          cd actions/stupid-job
+          cd .github/actions/stupid-job
           npm install
 
       - name: Execute Stupid Job
