@@ -14,42 +14,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Excute update-markdown script
+      - name: Update PR Content (When merging down to develop)
+        if: startsWith(github.head_ref, 'releases/') && github.base_ref == 'dev'
         run: |
-          chmod +x ./scripts/update-markdown.sh
-          ./scripts/update-markdown.sh
+          HEAD_REF="${{ github.head_ref }}"
+          BASE_REF="${{ github.base_ref }}"
+
+          echo "🍌 HEAD_REF: $HEAD_REF"
+          echo "🥑 BASE_REF: $BASE_REF"
+
+          sed -i '' "s/{{FROM}}/$HEAD_REF/" .github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.mก
+          sed -i '' "s/{{TO}}/$BASE_REF/" .github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md
 
       - name: Apply PR Template
         uses: actions/github-script@v6
         with:
           script: |
-            let isChangeFile = false;
             const fs = require('fs');
             const path = require('path');
             const { base, head } = context.payload.pull_request;
-
-            function replaceTextInMarkdown(filePath, searchText, replaceText) {
-              try {
-                // อ่านไฟล์
-                const content = fs.readFileSync(filePath, "utf8");
-
-                // แทนที่ข้อความ
-                const updatedContent = content.replace(
-                  new RegExp(searchText, "g"),
-                  replaceText
-                );
-                const replacedFileName = filePath.replace('.md', `_temp.md`);
-
-                // เขียนไฟล์กลับ
-                fs.writeFileSync(replacedFileName, updatedContent, "utf8");
-
-                console.log("✅ แทนที่ข้อความสำเร็จ!");
-                return replacedFileName;
-              } catch (error) {
-                console.error("🚨 เกิดข้อผิดพลาด:", error);
-                return null;
-              }
-            }
 
             if (head.ref.startsWith('releases/') && base.ref === 'main') {
               templateFile = '.github/PULL_REQUEST_TEMPLATE/release_to_master.md';
@@ -59,8 +42,6 @@ jobs:
               templateMessage = '🔥 Hotfix PR template automatically applied!';
 
             } else if (head.ref.startsWith('releases/') && base.ref === 'dev') {
-
-              isChangeFile = true;
               templateFile = '.github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md';
               templateMessage = '🎁 Merge Down After Release with template automatically applied!!';
 
@@ -85,15 +66,13 @@ jobs:
               // Read the template content
               const templateContent = fs.readFileSync(templateFile, 'utf8');
 
-              const finalContent = templateContent.replace(/{{RELEASE_VERSION}}/g, head.ref.replace('releases/', ''))
-                .replace(/{{FROM}}/g, base.ref);
               
               // Update the PR description with the template content
               await github.rest.pulls.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: context.issue.number,
-                body: isChangeFile ? finalContent : templateContent
+                body: templateContent
               });
               
               // Add a comment to notify the user
