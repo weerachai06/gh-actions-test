@@ -23,8 +23,8 @@ jobs:
           echo "🍌 HEAD_REF: $HEAD_REF"
           echo "🥑 BASE_REF: $BASE_REF"
 
-          sed -i '' "s/{{FROM}}/$HEAD_REF/" .github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md
-          sed -i '' "s/{{TO}}/$BASE_REF/" .github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md
+          sed -i '' "s|{{FROM}}|$HEAD_REF|" .github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md
+          sed -i '' "s|{{TO}}|$BASE_REF|" .github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md
 
       - name: Apply PR Template
         uses: actions/github-script@v6
