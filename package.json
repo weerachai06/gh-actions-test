@@ -15,16 +15,11 @@
   "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup --config rollup.config.js",
+    "build": "ncc build src/index.mjs -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.6",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "rollup": "^4.44.1"
   }
 }
