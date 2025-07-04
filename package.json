@@ -1,0 +1,24 @@
+{
+  "name": "stupid-job",
+  "version": "0.0.1",
+  "description": "Stupid Jobs",
+  "homepage": "https://github.com/weerachai06/gh-actions-test#readme",
+  "bugs": {
+    "url": "https://github.com/weerachai06/gh-actions-test/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weerachai06/gh-actions-test.git"
+  },
+  "license": "MIT",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1"
+  }
+}
