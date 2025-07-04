@@ -1,31 +1,55 @@
+const fs = require("fs");
+const path = require("path");
+
 module.exports = async ({ github, context, core }) => {
+  const { base, head } = context.payload.pull_request;
+
+  if (head.ref.startsWith("releases/") && base.ref === "main") {
+    templateFile = ".github/PULL_REQUEST_TEMPLATE/release_to_master.md";
+    templateMessage = "🚀 Release PR template automatically applied!";
+  } else if (head.ref.startsWith("hotfix/") && base.ref === "main") {
+    templateFile = ".github/PULL_REQUEST_TEMPLATE/hotfix_to_master.md";
+    templateMessage = "🔥 Hotfix PR template automatically applied!";
+  } else if (head.ref.startsWith("releases/") && base.ref === "dev") {
+    templateFile = ".github/PULL_REQUEST_TEMPLATE/merge_down_to_develop.md";
+    templateMessage =
+      "🎁 Merge Down After Release with template automatically applied!!";
+  } else if (base.ref === "dev") {
+    templateFile = ".github/PULL_REQUEST_TEMPLATE/feature_to_develop.md";
+    templateMessage = "✨ Feature PR template automatically applied!";
+  } else {
+    console.log("No matching branch pattern found for PR template");
+    return;
+  }
+
   try {
-    console.log("Hello from external JavaScript file!");
+    // Check if template file exists
+    if (!fs.existsSync(templateFile)) {
+      console.log(`Template file does not exist: ${templateFile}`);
+      return;
+    }
 
-    const repo = await github.rest.repos.get({
+    // Read the template content
+    const templateContent = fs.readFileSync(templateFile, "utf8");
+
+    // Update the PR description with the template content
+    await github.rest.pulls.update({
       owner: context.repo.owner,
       repo: context.repo.repo,
+      pull_number: context.issue.number,
+      body: templateContent,
     });
 
-    console.log(`Repository: ${repo.data.full_name}`);
-    console.log(`Stars: ${repo.data.stargazers_count}`);
-
-    const issue = await github.rest.issues.create({
+    // Add a comment to notify the user
+    await github.rest.issues.createComment({
+      issue_number: context.issue.number,
       owner: context.repo.owner,
       repo: context.repo.repo,
-      title: "Automated Issue",
-      body: "This issue was created by GitHub Actions!",
+      body: templateMessage,
     });
 
-    console.log(`Created issue #${issue.data.number}`);
-
-    return {
-      repository: repo.data.full_name,
-      stars: repo.data.stargazers_count,
-      issueNumber: issue.data.number,
-    };
+    console.log(`Applied PR template: ${templateFile}`);
   } catch (error) {
-    core.setFailed(`Script failed: ${error.message}`);
-    throw error;
+    console.error(`Error applying PR template: ${error}`);
   }
 };
