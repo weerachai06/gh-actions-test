@@ -27,9 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build action
-        run: npm run build
-
       # Run the action to comment on the PR
       - name: Run Stupid Job action
         id: stupid-job
